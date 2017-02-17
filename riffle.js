@@ -1,20 +1,7 @@
-(function (definition) {
-    // AMD
-    if (typeof define === "function") {
-        define(definition);
-    // CommonJS
-    } else if (typeof exports === "object") {
-        definition(this, exports);
-    // Browser
-    } else {
-        definition(this);
-    }
-}(function (global, exports) {
+(function (global) {
     "use strict";
     var old,
         _;
-
-    exports = exports || global;
 
     if (!global.setTimeout) {
         return;
@@ -128,12 +115,12 @@
         return !!(x && x.invoke && x.onOutput && x.offOutput && x.input);
     };
 
-    old = exports.stream;
+    old = global.stream;
     stream.noConflict = function noConflict() {
-        exports.stream = old;
+        global.stream = old;
         return stream;
     };
-    exports.stream = stream;
+    global.stream = stream;
 
     _ = {
         breaker: {},
@@ -152,13 +139,7 @@
             return _.arrayProto.slice.call(args);
         },
         applyArgsToFn: function applyArgsToFn(fn, args) {
-            try {
-                fn.apply(global, args);
-            } catch (e) {
-                if (console && console.exception) {
-                    console.exception(e);
-                }
-            }
+            fn.apply(global, args);
         },
         each: function each(obj, iterator, context) {
             var i, l, key;
@@ -197,4 +178,5 @@
         }
     };
 
-}));
+    return stream;
+}(window, module.exports));
